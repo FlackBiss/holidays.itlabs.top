@@ -1,0 +1,4 @@
+<?php
+namespace App\Controller;
+use App\Entity\KioskTerminal; use Doctrine\ORM\EntityManagerInterface; use Symfony\Component\HttpFoundation\JsonResponse; use Symfony\Component\HttpKernel\Exception\NotFoundHttpException; use Symfony\Component\Routing\Attribute\Route;
+final readonly class TerminalPingController { public function __construct(private EntityManagerInterface $em) {} #[Route('/api/terminals/{code}/ping',name:'api_terminal_ping',methods:['POST'])] public function __invoke(string $code): JsonResponse { $terminal=$this->em->getRepository(KioskTerminal::class)->findOneBy(['code'=>$code,'active'=>true]); if(!$terminal instanceof KioskTerminal) throw new NotFoundHttpException('Терминал не найден.'); $terminal->lastSeenAt=new \DateTimeImmutable(); $this->em->flush(); return new JsonResponse(['ok'=>true,'serverTime'=>(new \DateTimeImmutable())->format(DATE_ATOM)]); } }

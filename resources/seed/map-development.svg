@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <rect width="1600" height="1000" fill="#eaf7f4"/>
+  <path d="M0 130L1600 0v260L0 390z" fill="#d1eee2"/>
+  <path d="M0 780L1600 560v440H0z" fill="#bfe7d0"/>
+  <g fill="none" stroke="#f7c85d" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 810L380 650L690 580L990 390L1360 240"/>
+    <path d="M690 580L880 750L1220 790"/>
+  </g>
+  <g font-family="Arial,sans-serif" font-size="32" font-weight="700" text-anchor="middle">
+    <g><rect x="90" y="740" width="190" height="95" rx="14" fill="#ffffff" stroke="#087f98" stroke-width="5"/><text x="185" y="798" fill="#087f98">Вход</text></g>
+    <g><rect x="300" y="500" width="230" height="115" rx="14" fill="#ffffff" stroke="#c6a657" stroke-width="5"/><text x="415" y="565" fill="#3e4446">Корпус 1</text></g>
+    <g><rect x="610" y="390" width="245" height="125" rx="14" fill="#ffffff" stroke="#c6a657" stroke-width="5"/><text x="732" y="460" fill="#3e4446">Медцентр</text></g>
+    <g><rect x="885" y="215" width="230" height="115" rx="14" fill="#ffffff" stroke="#087f98" stroke-width="5"/><text x="1000" y="280" fill="#3e4446">Ресторан</text></g>
+    <g><rect x="1235" y="90" width="250" height="120" rx="14" fill="#ffffff" stroke="#c6a657" stroke-width="5"/><text x="1360" y="160" fill="#3e4446">Корпус 7</text></g>
+    <g><rect x="790" y="730" width="215" height="110" rx="14" fill="#ffffff" stroke="#087f98" stroke-width="5"/><text x="897" y="795" fill="#3e4446">Бассейн</text></g>
+  </g>
+  <text x="40" y="65" font-family="Arial,sans-serif" font-size="28" fill="#2d555d">Тестовая схема маршрутной сети. Замените утверждённой картой.</text>
+</svg>

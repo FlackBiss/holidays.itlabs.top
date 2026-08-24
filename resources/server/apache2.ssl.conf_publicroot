@@ -1,0 +1,7 @@
+DocumentRoot /home/shared-backend/web/holidays.itlabs.top/public_html/public
+
+<Directory /home/shared-backend/web/holidays.itlabs.top/public_html/public>
+    AllowOverride All
+    SSLRequireSSL
+    Options +Includes -Indexes +ExecCGI
+</Directory>

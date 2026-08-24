@@ -3,8 +3,10 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
-#parameters:
-#    app.example: '%env(example)%'
+parameters:
+    app.weather.provider: '%env(string:WEATHER_PROVIDER)%'
+    app.weather.user_agent: '%env(string:WEATHER_USER_AGENT)%'
+    app.mobile_map_url: '%env(string:MOBILE_MAP_URL)%'
 
 services:
     # default configuration for services in *this* file
@@ -20,6 +22,23 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Service\WeatherService:
+        arguments:
+            $provider: '%app.weather.provider%'
+            $userAgent: '%app.weather.user_agent%'
+
+    App\Service\NavigationService:
+        arguments:
+            $mobileMapUrl: '%app.mobile_map_url%'
+
+    App\Controller\NavigationQrController:
+        arguments:
+            $mobileMapUrl: '%app.mobile_map_url%'
+
+    App\OpenApi\OpenApiFactory:
+        decorates: 'api_platform.openapi.factory'
+        arguments: ['@App\OpenApi\OpenApiFactory.inner']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

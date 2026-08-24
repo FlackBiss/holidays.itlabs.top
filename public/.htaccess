@@ -24,6 +24,11 @@ DirectoryIndex index.php
 
     RewriteEngine On
 
+    # Heal links cached while the virtual host pointed at the project root.
+    # The public directory is the document root and must never appear in URLs.
+    RewriteCond %{THE_REQUEST} \s/+public(?:/[^\s?]*)? [NC]
+    RewriteRule ^public(?:/(.*))?$ /$1?public_removed=1 [R=302,L,NE]
+
     # Determine the RewriteBase automatically and set it as environment variable.
     # If you are using Apache aliases to do mass virtual hosting or installed the
     # project in a subdirectory, the base path will be prepended to allow proper

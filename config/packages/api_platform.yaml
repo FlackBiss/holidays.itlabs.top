@@ -1,12 +1,12 @@
 api_platform:
     # The title of the API.
-    title: 'API title'
+    title: 'Каникулы в Аксаково API'
 
     # The description of the API.
-    description: 'API description'
+    description: 'Контент, навигация и данные информационного киоска санатория'
 
     # The version of the API.
-    version: '0.0.1'
+    version: '1.0.0'
 
     # Set this to false if you want Webby to disappear.
     show_webby: false
@@ -21,7 +21,7 @@ api_platform:
     enable_re_doc: false
 
     # Enable the entrypoint.
-    enable_entrypoint: true
+    enable_entrypoint: false
 
     # Enable the docs.
     enable_docs: true
@@ -42,8 +42,13 @@ api_platform:
 #        csv: [ 'text/csv' ]
         html: [ 'text/html' ]
 
+    error_formats:
+        jsonproblem: [ 'application/problem+json' ]
+
     defaults:
         pagination_items_per_page: 25
+        cache_headers:
+            vary: [ 'Content-Type', 'Authorization', 'Origin' ]
 
     mapping:
         paths: [ '%kernel.project_dir%/src/Entity' ]

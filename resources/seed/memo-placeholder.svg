@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1528" viewBox="0 0 1080 1528">
+  <rect width="1080" height="1528" fill="#f8fbfc"/>
+  <rect width="1080" height="240" fill="#087f98"/>
+  <text x="70" y="105" font-family="Arial,sans-serif" font-size="54" font-weight="700" fill="#fff">ВАЖНАЯ ИНФОРМАЦИЯ</text>
+  <text x="70" y="175" font-family="Arial,sans-serif" font-size="34" fill="#fff">Стартовая памятка</text>
+  <g font-family="Arial,sans-serif" fill="#29434a">
+    <text x="80" y="390" font-size="42" font-weight="700">Материал добавлен для проверки API.</text>
+    <text x="80" y="480" font-size="32">Загрузите утверждённый PNG, JPG или PDF</text>
+    <text x="80" y="530" font-size="32">через раздел «Медиафайлы» в админке.</text>
+  </g>
+  <rect x="80" y="650" width="920" height="570" rx="36" fill="#e4f4f7"/>
+  <path d="M540 770l210 370H330z" fill="#f1cf71" stroke="#c29d3d" stroke-width="14"/>
+  <text x="540" y="1045" text-anchor="middle" font-family="Arial,sans-serif" font-size="130" font-weight="700" fill="#705a20">!</text>
+</svg>

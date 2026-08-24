@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#087f98"/><stop offset="1" stop-color="#42bca8"/></linearGradient></defs>
+  <rect width="1080" height="1920" fill="url(#g)"/>
+  <circle cx="850" cy="320" r="260" fill="#f1cf71" opacity=".9"/>
+  <path d="M0 1410Q270 1240 540 1410T1080 1410V1920H0z" fill="#f8f5eb" opacity=".96"/>
+  <text x="90" y="720" font-family="Arial,sans-serif" font-size="88" font-weight="700" fill="#fff">Каникулы</text>
+  <text x="90" y="830" font-family="Arial,sans-serif" font-size="88" font-weight="700" fill="#fff">в Аксаково</text>
+  <text x="90" y="1010" font-family="Arial,sans-serif" font-size="40" fill="#fff">Стартовый медиаматериал</text>
+  <text x="90" y="1080" font-family="Arial,sans-serif" font-size="34" fill="#fff">Замените утверждённым постером в админке</text>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="240" viewBox="0 0 640 240">
+  <rect width="640" height="240" rx="28" fill="#f8f5eb"/>
+  <path d="M78 178V72l58-42 58 42v106h-36v-58h-44v58z" fill="#c6a657"/>
+  <text x="224" y="105" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#087f98">Каникулы</text>
+  <text x="224" y="148" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#087f98">в Аксаково</text>
+  <text x="224" y="184" font-family="Arial,sans-serif" font-size="18" fill="#38464b">Стартовый логотип — замените в админке</text>
+</svg>

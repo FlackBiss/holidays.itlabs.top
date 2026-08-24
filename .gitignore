@@ -5,6 +5,9 @@ composer.lock
 /public/dump.zip
 /public/images
 /public/videos
+/public/uploads/**
+!/public/uploads/**/
+!/public/uploads/**/.gitkeep
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -18,6 +21,10 @@ composer.lock
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
+.phpunit.cache/
+/config/reference.php
+/.osp/
+/*.tar.gz
 ###< phpunit/phpunit ###
 
 ###> symfony/phpunit-bridge ###
