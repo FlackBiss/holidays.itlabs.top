@@ -18,11 +18,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity]
+#[Vich\Uploadable]
 #[ApiResource(operations: [
     new Get(),
     new GetCollection(order: ['priority' => 'ASC', 'name' => 'ASC']),
@@ -68,10 +71,15 @@ class MapPlace
     #[Groups('map:read')]
     public string $name = '';
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(onDelete: 'SET NULL')]
-    #[Groups('map:read')]
-    public ?MapIcon $icon = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $iconFileName = null;
+
+    #[Vich\UploadableField(mapping: 'map_place_icons', fileNameProperty: 'iconFileName')]
+    #[Assert\File(maxSize: '10M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'])]
+    private ?File $iconFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $iconUpdatedAt = null;
 
     #[Groups('map:read')]
     public function getCoverUrl(): ?string
@@ -144,6 +152,28 @@ class MapPlace
     public function __construct() { $this->photos = new ArrayCollection(); $this->roomCategories = new ArrayCollection(); }
     public function getId(): ?int { return $this->id; }
     public function __toString(): string { return $this->name; }
+
+    public function getIconFile(): ?File { return $this->iconFile; }
+    public function getIconFileName(): ?string { return $this->iconFileName; }
+    public function setIconFileName(?string $fileName): void { $this->iconFileName = $fileName; }
+
+    public function setIconFile(?File $file): void
+    {
+        $this->iconFile = $file;
+        if ($file) $this->iconUpdatedAt = new \DateTimeImmutable();
+    }
+
+    #[Groups('map:read')]
+    public function getIcon(): ?array
+    {
+        $url = $this->getIconUrl();
+        return $url ? ['url' => $url] : null;
+    }
+
+    public function getIconUrl(): ?string
+    {
+        return $this->iconFileName ? '/uploads/map-place-icons/'.$this->iconFileName : null;
+    }
 
     #[Groups('map:read')]
     public function getCategoryLabel(): string { return $this->category->label(); }

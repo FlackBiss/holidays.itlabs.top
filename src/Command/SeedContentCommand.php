@@ -9,7 +9,6 @@ use App\Entity\GalleryMedia;
 use App\Entity\KioskTerminal;
 use App\Entity\MapArea;
 use App\Entity\MapEdge;
-use App\Entity\MapIcon;
 use App\Entity\MapNode;
 use App\Entity\MapPlace;
 use App\Entity\MapPlacePhoto;
@@ -305,11 +304,8 @@ final class SeedContentCommand extends Command
         $building7 = $this->place($plan, $mapNodes['Корпус 7'], PlaceType::RESIDENTIAL, 'Жилой корпус 7', [
             'buildingNumber' => '7', 'floorCount' => 4, 'roomCount' => 80, 'description' => 'Жилой корпус на отдельной территории.', 'category' => \App\Enum\MapPlaceCategory::RESIDENTIAL, 'routeDrawn' => true, 'priority' => 2,
         ]);
-        $residentialIcon = $this->em->getRepository(MapIcon::class)->findOneBy(['title' => 'Жилой корпус']);
-        $infrastructureIcon = $this->em->getRepository(MapIcon::class)->findOneBy(['title' => 'Инфраструктура']);
         foreach ([$building1, $building7] as $place) {
             $place->area = $area;
-            $place->icon = $residentialIcon;
             $this->room($place, 'Стандарт', 'Однокомнатный номер с базовым оснащением.', 1);
             $this->room($place, 'Полулюкс', 'Номер повышенной комфортности.', 2);
             $this->room($place, 'Люкс', 'Просторный номер с отдельной гостиной зоной.', 3);
@@ -320,7 +316,7 @@ final class SeedContentCommand extends Command
         $diningPlace = $this->place($plan, $mapNodes['Ресторан'], PlaceType::INFRASTRUCTURE, 'Обеденный зал', ['workingHours' => 'Ежедневно', 'searchAliases' => ['ресторан', 'питание', 'столовая'], 'category' => \App\Enum\MapPlaceCategory::BUILDINGS, 'routeDrawn' => true, 'priority' => 20]);
         $poolPlace = $this->place($plan, $mapNodes['Бассейн'], PlaceType::INFRASTRUCTURE, 'Бассейн', ['workingHours' => 'Ежедневно 08:00-19:00, перерыв 14:00-15:00', 'searchAliases' => ['плавание', 'фитнес'], 'category' => \App\Enum\MapPlaceCategory::SPORT, 'routeDrawn' => true, 'priority' => 30]);
         $sportPlace = $this->place($plan, $mapNodes['Спортивный центр'], PlaceType::INFRASTRUCTURE, 'Спортивный центр', ['workingHours' => 'Ежедневно 10:00-21:00', 'searchAliases' => ['спортзал', 'фитнес', 'боулинг'], 'category' => \App\Enum\MapPlaceCategory::SPORT, 'routeDrawn' => true, 'priority' => 40]);
-        foreach ([$medicalPlace, $diningPlace, $poolPlace, $sportPlace] as $place) { $place->area = $area; $place->icon = $infrastructureIcon; }
+        foreach ([$medicalPlace, $diningPlace, $poolPlace, $sportPlace] as $place) { $place->area = $area; }
 
         $terminal = $this->em->getRepository(KioskTerminal::class)->findOneBy(['code' => 'main-kiosk']);
         $terminalNew = !$terminal;
@@ -343,8 +339,6 @@ final class SeedContentCommand extends Command
         $this->orderedMedia(AnimationPoster::class, 'Анимационная программа', 'poster-placeholder.svg', 1);
         $this->orderedMedia(GalleryMedia::class, 'Территория санатория', 'map-development.svg', 1);
         $this->orderedMedia(GalleryMedia::class, 'Отдых и лечение', 'poster-placeholder.svg', 2);
-        $this->orderedMedia(MapIcon::class, 'Жилой корпус', 'logo-placeholder.svg', 1);
-        $this->orderedMedia(MapIcon::class, 'Инфраструктура', 'logo-placeholder.svg', 2);
     }
 
     private function seedPublicTransport(): void
@@ -625,7 +619,21 @@ final class SeedContentCommand extends Command
                 }
             }
         }
+        if ($place->getIconFileName() === null) {
+            $this->preparePlaceIconFile($place, 'logo-placeholder.svg');
+        }
         return $place;
+    }
+
+    private function preparePlaceIconFile(MapPlace $place, string $sourceFile): void
+    {
+        $source = $this->projectDir.'/resources/seed/'.$sourceFile;
+        $tempDir = $this->projectDir.'/var/seed-upload';
+        if (!is_dir($tempDir)) mkdir($tempDir, 0775, true);
+        $temp = $tempDir.'/'.uniqid('map-place-icon-', true).'-'.$sourceFile;
+        if (!copy($source, $temp)) throw new \RuntimeException('Не удалось подготовить иконку объекта '.$sourceFile);
+        $mimeType = mime_content_type($temp) ?: 'application/octet-stream';
+        $place->setIconFile(new UploadedFile($temp, $sourceFile, $mimeType, null, true));
     }
 
     private function placePhoto(MapPlace $place, string $sourceFile, int $priority): void

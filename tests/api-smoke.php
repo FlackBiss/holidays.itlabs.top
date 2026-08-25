@@ -174,7 +174,7 @@ try {
     foreach ([
         'content_items', 'content_pages', 'kiosk_terminals', 'map_edges', 'map_nodes', 'map_places',
         'map_plans', 'room_categories', 'section_documents', 'site_settings', 'standby_media',
-        'news_posters', 'animation_posters', 'gallery_media', 'map_icons', 'public_transport_routes',
+        'news_posters', 'animation_posters', 'gallery_media', 'public_transport_routes',
     ] as $collection) {
         $response = request('GET', $baseUrl.'/api/'.$collection);
         expectStatus($response, 200, 'Collection '.$collection);
@@ -215,7 +215,7 @@ try {
         }
         return true;
     }, true), 'Residential buildings use reusable room categories with photo sliders');
-    check(array_reduce($places, static fn (bool $ok, array $place): bool => $ok && !empty($place['icon']['url']), true), 'Every map object has a reusable map icon');
+    check(array_reduce($places, static fn (bool $ok, array $place): bool => $ok && !empty($place['icon']['url']), true), 'Every map object has its own uploaded map icon');
     check(array_reduce($places, static fn (bool $ok, array $place): bool => $ok && in_array($place['category'] ?? null, ['other', 'sport', 'recreation', 'residential', 'buildings'], true), true), 'Every map object belongs to a fixed legend category');
     check(array_reduce($infrastructure, static fn (bool $ok, array $place): bool => $ok && array_key_exists('routeDrawn', $place) && array_key_exists('routeAvailable', $place), true), 'Every infrastructure object exposes route drawing availability');
     $legendCategories = jsonBody(request('GET', $baseUrl.'/api/map/categories'));

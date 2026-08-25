@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\{AnimationPoster,ContentItem,ContentPage,GalleryMedia,KioskTerminal,MapIcon,MapPlace,MapPlan,NewsPoster,RoomCategory,SectionDocument,SiteSettings,StandbyMedia,User};
+use App\Entity\{AnimationPoster,ContentItem,ContentPage,GalleryMedia,KioskTerminal,MapPlace,MapPlan,NewsPoster,RoomCategory,SectionDocument,SiteSettings,StandbyMedia,User};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Dashboard,MenuItem};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +42,6 @@ final class DashboardController extends AbstractDashboardController
         ]);
         yield MenuItem::section('Карта и навигация');
         yield MenuItem::linkToCrud('Карта территории','fas fa-map',MapPlan::class)->setController(MapPlanCrudController::class);
-        yield MenuItem::linkToCrud('Иконки карты', 'fas fa-icons', MapIcon::class)->setController(MapIconCrudController::class);
         yield MenuItem::linkToCrud('Категории номеров', 'fas fa-bed', RoomCategory::class)->setController(RoomCategoryCrudController::class);
         yield MenuItem::subMenu('Объекты карты', 'fas fa-location-dot')->setSubItems([
             MenuItem::linkToCrud('Все объекты', 'fas fa-list', MapPlace::class)->setController(MapPlaceCrudController::class),

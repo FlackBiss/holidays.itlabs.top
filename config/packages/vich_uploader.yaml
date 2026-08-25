@@ -10,6 +10,10 @@ vich_uploader:
             uri_prefix: /uploads/map-places
             upload_destination: '%kernel.project_dir%/public/uploads/map-places'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        map_place_icons:
+            uri_prefix: /uploads/map-place-icons
+            upload_destination: '%kernel.project_dir%/public/uploads/map-place-icons'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
         room_category_photos:
             uri_prefix: /uploads/room-categories
             upload_destination: '%kernel.project_dir%/public/uploads/room-categories'

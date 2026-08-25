@@ -119,4 +119,13 @@ final class DomainModelTest extends TestCase
 
         self::assertSame('/uploads/map-places/building.webp', $photo->getUrl());
     }
+
+    public function testMapObjectIconIsUploadedDirectlyAndKeepsApiShape(): void
+    {
+        $place = new MapPlace();
+        $place->setIconFileName('building-icon.svg');
+
+        self::assertSame('/uploads/map-place-icons/building-icon.svg', $place->getIconUrl());
+        self::assertSame(['url' => '/uploads/map-place-icons/building-icon.svg'], $place->getIcon());
+    }
 }

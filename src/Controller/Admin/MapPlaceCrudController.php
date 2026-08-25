@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\Field\VichFileField;
 use App\Entity\MapEdge;
 use App\Entity\MapNode;
 use App\Entity\MapPlace;
@@ -33,6 +34,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 
 class MapPlaceCrudController extends AbstractCrudController
 {
@@ -82,7 +84,12 @@ class MapPlaceCrudController extends AbstractCrudController
 
         yield TextField::new('name', 'Название')->setColumns(12);
         yield TextEditorField::new('description', 'Короткое описание')->hideOnIndex()->setColumns(12);
-        yield AssociationField::new('icon', 'Иконка для карты')->autocomplete()->formatValue(static fn (mixed $value): string => $value ? (string) $value : '—')->setColumns(12);
+        yield VichFileField::new('iconFile', 'Иконка для карты')
+            ->onlyOnForms()
+            ->setFormTypeOption('allow_delete', true)
+            ->setHelp('PNG, JPG, WEBP или SVG. Иконка загружается прямо для этого объекта.')
+            ->setColumns(12);
+        yield ImageField::new('iconUrl', 'Иконка')->onlyOnIndex();
         yield ChoiceField::new('category', 'Категория легенды')->setChoices(MapPlaceCategory::choices())->setColumns(12);
         yield ArrayField::new('searchAliases', 'Дополнительные слова для поиска')->hideOnIndex()->setColumns(12);
         yield IntegerField::new('priority', 'Порядок отображения')->setColumns(12);
