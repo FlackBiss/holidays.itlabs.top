@@ -106,6 +106,7 @@ final class ImportMapInfrastructureCommand extends Command
         $created = 0;
         $updated = 0;
         $temporaryFiles = [];
+        $pendingIcons = [];
 
         try {
             foreach (self::OBJECTS as $object) {
@@ -116,7 +117,7 @@ final class ImportMapInfrastructureCommand extends Command
                 if ($isNew) {
                     $place->plan = $plan;
                     $place->area = $area;
-                    $this->em->persist($place);
+                    if (!$dryRun) $this->em->persist($place);
                     ++$created;
                 } else {
                     ++$updated;
@@ -133,19 +134,27 @@ final class ImportMapInfrastructureCommand extends Command
                 if (!$isNew && $oldName !== $place->name) $action .= sprintf(' (%s → %s)', $oldName, $place->name);
                 $output->writeln(sprintf('%-10s [%s:%02d] %s', $action, $place->category->value, $place->priority, $place->name));
 
-                if ($dryRun) continue;
-
-                $contents = $zip->getFromIndex($entries[$object['icon']]);
-                if ($contents === false) throw new \RuntimeException('Не удалось прочитать иконку: '.$object['icon']);
-                $temporaryFile = tempnam(sys_get_temp_dir(), 'aksakovo-icon-');
-                if ($temporaryFile === false || file_put_contents($temporaryFile, $contents) === false) {
-                    throw new \RuntimeException('Не удалось подготовить иконку: '.$object['icon']);
-                }
-                $temporaryFiles[] = $temporaryFile;
-                $place->setIconFile(new UploadedFile($temporaryFile, $object['icon'], 'image/svg+xml', null, true));
+                if (!$dryRun) $pendingIcons[] = [$place, $object['icon'], $entries[$object['icon']]];
             }
 
-            if (!$dryRun) $this->em->flush();
+            if (!$dryRun) {
+                // Persist new rows first. Vich reliably processes the icon on the
+                // following update flush for both newly created and existing rows.
+                $this->em->flush();
+
+                foreach ($pendingIcons as [$place, $iconName, $entryIndex]) {
+                    $contents = $zip->getFromIndex($entryIndex);
+                    if ($contents === false) throw new \RuntimeException('Не удалось прочитать иконку: '.$iconName);
+                    $temporaryFile = tempnam(sys_get_temp_dir(), 'aksakovo-icon-');
+                    if ($temporaryFile === false || file_put_contents($temporaryFile, $contents) === false) {
+                        throw new \RuntimeException('Не удалось подготовить иконку: '.$iconName);
+                    }
+                    $temporaryFiles[] = $temporaryFile;
+                    $place->setIconFile(new UploadedFile($temporaryFile, $iconName, 'image/svg+xml', null, true));
+                }
+
+                $this->em->flush();
+            }
         } finally {
             $zip->close();
             foreach ($temporaryFiles as $temporaryFile) {
