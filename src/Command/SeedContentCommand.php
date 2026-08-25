@@ -310,12 +310,12 @@ final class SeedContentCommand extends Command
             $this->room($place, 'Полулюкс', 'Номер повышенной комфортности.', 2);
             $this->room($place, 'Люкс', 'Просторный номер с отдельной гостиной зоной.', 3);
         }
-        $medicalPlace = $this->place($plan, $mapNodes['Медицинский центр'], PlaceType::INFRASTRUCTURE, 'Медицинский центр', [
-            'description' => 'Регистратура, кабинеты врачей и лечебные отделения.', 'workingHours' => 'Ежедневно 08:00-19:00', 'phone' => '59-29', 'onlineBooking' => true, 'bookingUrl' => 'https://shop.hotbot.ai/', 'searchAliases' => ['медцентр', 'врач', 'процедуры'], 'category' => \App\Enum\MapPlaceCategory::BUILDINGS, 'routeDrawn' => true, 'priority' => 10,
+        $medicalPlace = $this->place($plan, $mapNodes['Медицинский центр'], PlaceType::INFRASTRUCTURE, 'Лечебно-административный корпус', [
+            'description' => 'Регистратура, кабинеты врачей и лечебные отделения.', 'workingHours' => 'Ежедневно 08:00-19:00', 'phone' => '59-29', 'onlineBooking' => true, 'bookingUrl' => 'https://shop.hotbot.ai/', 'searchAliases' => ['медцентр', 'врач', 'процедуры'], 'category' => \App\Enum\MapPlaceCategory::BUILDINGS, 'routeDrawn' => true, 'priority' => 2,
         ]);
-        $diningPlace = $this->place($plan, $mapNodes['Ресторан'], PlaceType::INFRASTRUCTURE, 'Обеденный зал', ['workingHours' => 'Ежедневно', 'searchAliases' => ['ресторан', 'питание', 'столовая'], 'category' => \App\Enum\MapPlaceCategory::BUILDINGS, 'routeDrawn' => true, 'priority' => 20]);
-        $poolPlace = $this->place($plan, $mapNodes['Бассейн'], PlaceType::INFRASTRUCTURE, 'Бассейн', ['workingHours' => 'Ежедневно 08:00-19:00, перерыв 14:00-15:00', 'searchAliases' => ['плавание', 'фитнес'], 'category' => \App\Enum\MapPlaceCategory::SPORT, 'routeDrawn' => true, 'priority' => 30]);
-        $sportPlace = $this->place($plan, $mapNodes['Спортивный центр'], PlaceType::INFRASTRUCTURE, 'Спортивный центр', ['workingHours' => 'Ежедневно 10:00-21:00', 'searchAliases' => ['спортзал', 'фитнес', 'боулинг'], 'category' => \App\Enum\MapPlaceCategory::SPORT, 'routeDrawn' => true, 'priority' => 40]);
+        $diningPlace = $this->place($plan, $mapNodes['Ресторан'], PlaceType::INFRASTRUCTURE, 'Обеденный зал', ['workingHours' => 'Ежедневно', 'searchAliases' => ['ресторан', 'питание', 'столовая'], 'category' => \App\Enum\MapPlaceCategory::RECREATION, 'routeDrawn' => true, 'priority' => 1]);
+        $poolPlace = $this->place($plan, $mapNodes['Бассейн'], PlaceType::INFRASTRUCTURE, 'Бассейн', ['workingHours' => 'Ежедневно 08:00-19:00, перерыв 14:00-15:00', 'searchAliases' => ['плавание', 'фитнес'], 'category' => \App\Enum\MapPlaceCategory::SPORT, 'routeDrawn' => true, 'priority' => 1]);
+        $sportPlace = $this->place($plan, $mapNodes['Спортивный центр'], PlaceType::INFRASTRUCTURE, 'Спортивный зал', ['workingHours' => 'Ежедневно 10:00-21:00', 'searchAliases' => ['спортзал', 'фитнес', 'боулинг'], 'category' => \App\Enum\MapPlaceCategory::SPORT, 'routeDrawn' => true, 'priority' => 3]);
         foreach ([$medicalPlace, $diningPlace, $poolPlace, $sportPlace] as $place) { $place->area = $area; }
 
         $terminal = $this->em->getRepository(KioskTerminal::class)->findOneBy(['code' => 'main-kiosk']);
