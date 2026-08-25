@@ -104,8 +104,8 @@ class MapPlaceCrudController extends AbstractCrudController
             ->onlyOnForms()->setColumns(12);
 
         yield FormField::addTab('Положение на карте')->setIcon('fa fa-location-dot')->onlyOnForms();
-        yield NumberField::new('mapX', 'Позиция на карте: X, px')->setNumDecimals(2)->setColumns(12)->hideOnIndex();
-        yield NumberField::new('mapY', 'Позиция на карте: Y, px')->setNumDecimals(2)->setColumns(12)->hideOnIndex();
+        yield NumberField::new('mapX', 'Позиция на карте: X, px')->setNumDecimals(2)->setFormTypeOption('attr', ['readonly' => true])->setColumns(12)->hideOnIndex();
+        yield NumberField::new('mapY', 'Позиция на карте: Y, px')->setNumDecimals(2)->setFormTypeOption('attr', ['readonly' => true])->setColumns(12)->hideOnIndex();
         yield NumberField::new('latitude', 'GPS: широта')->setNumDecimals(7)->setColumns(12)->hideOnIndex();
         yield NumberField::new('longitude', 'GPS: долгота')->setNumDecimals(7)->setColumns(12)->hideOnIndex();
 
