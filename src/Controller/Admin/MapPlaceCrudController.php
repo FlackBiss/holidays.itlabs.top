@@ -123,7 +123,7 @@ class MapPlaceCrudController extends AbstractCrudController
         }
         if (static::fixedType() !== PlaceType::RESIDENTIAL) {
             yield FormField::addTab('Инфраструктурный объект')->setIcon('fa fa-tree-city')->addCssClass('place-tab-infrastructure')->onlyOnForms();
-            yield TextField::new('workingHours', 'Время работы')->addCssClass('place-field-infrastructure')->setColumns(12);
+            yield TextEditorField::new('workingHours', 'Время работы')->addCssClass('place-field-infrastructure')->setColumns(12);
             yield TextField::new('phone', 'Телефон')->addCssClass('place-field-infrastructure')->setColumns(12);
             yield BooleanField::new('onlineBooking', 'Возможна онлайн-запись')->addCssClass('place-field-infrastructure')->setColumns(12);
             yield BooleanField::new('routeDrawn', 'Маршрут расчерчен')->addCssClass('place-field-infrastructure')->setColumns(12);
