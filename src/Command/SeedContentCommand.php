@@ -21,6 +21,7 @@ use App\Entity\SectionDocument;
 use App\Entity\ServiceQrLink;
 use App\Entity\SiteSettings;
 use App\Entity\StandbyMedia;
+use App\Entity\TaganrogSliderImage;
 use App\Enum\ContentPageType;
 use App\Enum\ContentSection;
 use App\Enum\PlaceType;
@@ -68,6 +69,7 @@ final class SeedContentCommand extends Command
         $settings->latitude = 56.0343584;
         $settings->longitude = 37.6029333;
         $settings->idleTimeoutSeconds = 120;
+        $settings->modalTimeoutSeconds = 60;
         $settings->slideDurationSeconds = 10;
         $settings->maxGeoSnapDistanceMeters = 500;
 
@@ -233,6 +235,14 @@ final class SeedContentCommand extends Command
         $this->pageMascotTwoFile($taganrog, 'poster-placeholder.svg');
         $this->pageExtraImageFile($taganrog, 'poster-placeholder.svg');
         $this->pageFifthImageFile($taganrog, 'poster-placeholder.svg');
+        if ($taganrog->sliderImages->isEmpty()) {
+            $sliderImage = new TaganrogSliderImage();
+            $sliderImage->priority = 1;
+            $taganrog->addSliderImage($sliderImage);
+            $this->prepareTaganrogSliderImageFile($sliderImage, 'poster-placeholder.svg');
+            $this->em->persist($sliderImage);
+            ++$this->created;
+        }
     }
 
     private function seedContent(): void
@@ -690,6 +700,17 @@ final class SeedContentCommand extends Command
         if (!copy($source, $temp)) throw new \RuntimeException('Не удалось подготовить фотографию категории '.$sourceFile);
         $mimeType = mime_content_type($temp) ?: 'application/octet-stream';
         $photo->setFile(new UploadedFile($temp, $sourceFile, $mimeType, null, true));
+    }
+
+    private function prepareTaganrogSliderImageFile(TaganrogSliderImage $image, string $sourceFile): void
+    {
+        $source = $this->projectDir.'/resources/seed/'.$sourceFile;
+        $tempDir = $this->projectDir.'/var/seed-upload';
+        if (!is_dir($tempDir)) mkdir($tempDir, 0775, true);
+        $temp = $tempDir.'/'.uniqid('taganrog-slider-', true).'-'.$sourceFile;
+        if (!copy($source, $temp)) throw new \RuntimeException('Не удалось подготовить фотографию слайдера '.$sourceFile);
+        $mimeType = mime_content_type($temp) ?: 'application/octet-stream';
+        $image->setFile(new UploadedFile($temp, $sourceFile, $mimeType, null, true));
     }
 
     /** @param array<string, mixed> $values */

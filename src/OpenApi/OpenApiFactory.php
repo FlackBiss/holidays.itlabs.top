@@ -83,6 +83,12 @@ final readonly class OpenApiFactory implements OpenApiFactoryInterface
             summary: 'Сигнал активности терминала',
             parameters: [new Parameter('code', 'path', 'Код терминала', true, schema: ['type' => 'string'])],
         )));
+        $paths->addPath('/api/settings/exit-password', (new PathItem())->withGet(new Operation(
+            operationId: 'getExitPassword',
+            tags: ['Настройки'],
+            responses: ['200' => new Response('Текущий пароль для выхода из приложения')],
+            summary: 'Получение пароля для выхода из приложения',
+        )));
 
         return $openApi;
     }

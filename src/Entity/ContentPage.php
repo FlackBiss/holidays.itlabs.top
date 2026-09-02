@@ -107,6 +107,12 @@ class ContentPage
     #[Groups('content:read')]
     public Collection $serviceQrLinks;
 
+    /** @var Collection<int, TaganrogSliderImage> */
+    #[ORM\OneToMany(targetEntity: TaganrogSliderImage::class, mappedBy: 'page', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['priority' => 'ASC', 'id' => 'ASC'])]
+    #[Groups('content:read')]
+    public Collection $sliderImages;
+
     #[ORM\Column(type: Types::JSON)]
     #[Groups('content:read')]
     public array $data = [];
@@ -115,7 +121,11 @@ class ContentPage
     #[Groups('content:read')]
     public bool $active = true;
 
-    public function __construct() { $this->serviceQrLinks = new ArrayCollection(); }
+    public function __construct()
+    {
+        $this->serviceQrLinks = new ArrayCollection();
+        $this->sliderImages = new ArrayCollection();
+    }
     public function getId(): ?int { return $this->id; }
     public function __toString(): string { return $this->title ?: $this->type->value; }
 
@@ -157,6 +167,8 @@ class ContentPage
     public function getDocumentUrl(): ?string { return $this->documentFileName ? '/uploads/content-files/'.$this->documentFileName : null; }
     public function addServiceQrLink(ServiceQrLink $link): void { if (!$this->serviceQrLinks->contains($link)) { $this->serviceQrLinks->add($link); $link->page = $this; } }
     public function removeServiceQrLink(ServiceQrLink $link): void { $this->serviceQrLinks->removeElement($link); }
+    public function addSliderImage(TaganrogSliderImage $image): void { if (!$this->sliderImages->contains($image)) { $this->sliderImages->add($image); $image->page = $this; } }
+    public function removeSliderImage(TaganrogSliderImage $image): void { $this->sliderImages->removeElement($image); }
 
     public function getDataValue(string $key, mixed $default = null): mixed { return $this->data[$key] ?? $default; }
     public function setDataValue(string $key, mixed $value): void { $this->data[$key] = $value; }

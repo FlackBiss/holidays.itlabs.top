@@ -40,7 +40,11 @@ final readonly class HomeProvider implements ProviderInterface
             'companyName' => $settings->companyName,
             'logo' => $settings->getFileUrl(),
             'idleTimeoutSeconds' => $settings->idleTimeoutSeconds,
+            'modalTimeoutSeconds' => $settings->modalTimeoutSeconds,
             'slideDurationSeconds' => $settings->slideDurationSeconds,
+            'exitPassword' => $settings->getExitPassword(),
+            'exitPasswordConfigured' => $settings->isExitPasswordConfigured(),
+            'allowedLinks' => $settings->allowedLinks,
         ] : null;
         $view->weather = get_object_vars($weather);
         $view->standby = array_map(

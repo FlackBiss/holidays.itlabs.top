@@ -97,6 +97,7 @@ try {
     $home = jsonBody($homeResponse);
     check(is_array($home['weather'] ?? null) && isset($home['weather']['provider']), 'Home embeds weather data');
     check(is_string($home['settings']['logo'] ?? null) && $home['settings']['logo'] !== '', 'Home embeds logo URL');
+    check(is_int($home['settings']['modalTimeoutSeconds'] ?? null), 'Home embeds modal timeout');
     check(count($home['standby'] ?? []) > 0 && !empty($home['standby'][0]['url']), 'Standby contains uploaded media');
     check(orderedByPriority($home['standby'] ?? []), 'Standby is ordered by backend priority');
     check(!empty($home['serverDateTime']['iso']) && ($home['serverDateTime']['timezone'] ?? null) === 'Europe/Moscow', 'Home contains server date and time');
@@ -169,6 +170,7 @@ try {
     check(count($sectionData['uav-alert']['memos'] ?? []) > 0, 'UAV memos are populated');
     $taganrogPage = $sectionData['taganrog']['page'] ?? [];
     check(!empty($taganrogPage['siteQrUrl']) && !empty($taganrogPage['logoUrl']) && count($taganrogPage['images'] ?? []) === 3, 'Taganrog contains QR, logo and three images');
+    check(is_array($taganrogPage['slider'] ?? null) && orderedByPriority($taganrogPage['slider']), 'Taganrog contains an ordered slider image collection');
     check(!empty($taganrogPage['mission']) && !empty($taganrogPage['description']) && count($taganrogPage['aboutSanatorium'] ?? []) > 0, 'Taganrog editable text content is populated');
 
     foreach ([

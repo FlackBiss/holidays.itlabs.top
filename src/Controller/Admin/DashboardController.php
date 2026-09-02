@@ -42,6 +42,7 @@ final class DashboardController extends AbstractDashboardController
         ]);
         yield MenuItem::section('Карта и навигация');
         yield MenuItem::linkToCrud('Карта территории','fas fa-map',MapPlan::class)->setController(MapPlanCrudController::class);
+        yield MenuItem::linkToRoute('Расчерчивание карты', 'fas fa-draw-polygon', 'admin_map_tracer_index');
         yield MenuItem::linkToCrud('Категории номеров', 'fas fa-bed', RoomCategory::class)->setController(RoomCategoryCrudController::class);
         yield MenuItem::subMenu('Объекты карты', 'fas fa-location-dot')->setSubItems([
             MenuItem::linkToCrud('Все объекты', 'fas fa-list', MapPlace::class)->setController(MapPlaceCrudController::class),

@@ -13,6 +13,7 @@ use App\Entity\GalleryMedia;
 use App\Entity\NewsPoster;
 use App\Entity\PublicTransportRoute;
 use App\Entity\SectionDocument;
+use App\Entity\TaganrogSliderImage;
 use App\Enum\ContentPageType;
 use App\Enum\ContentSection;
 use App\Enum\SectionSlug;
@@ -253,6 +254,11 @@ final readonly class SectionProvider implements ProviderInterface
             'siteQrUrl' => $page->getImageUrl(),
             'logoUrl' => $page->getLogoUrl(),
             'images' => array_values(array_filter([$page->getMascotTwoUrl(), $page->getExtraImageUrl(), $page->getFifthImageUrl()])),
+            'slider' => array_map(static fn (TaganrogSliderImage $image): array => [
+                'id' => $image->getId(),
+                'url' => $image->getUrl(),
+                'priority' => $image->priority,
+            ], $page->sliderImages->toArray()),
             'mission' => $page->getMission(),
             'description' => $page->description,
             'aboutSanatorium' => $page->getAboutSanatorium(),

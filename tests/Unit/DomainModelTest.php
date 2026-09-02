@@ -10,6 +10,7 @@ use App\Entity\StandbyMedia;
 use App\Entity\ContentPage;
 use App\Entity\RoomCategory;
 use App\Entity\RoomCategoryPhoto;
+use App\Entity\TaganrogSliderImage;
 use App\Enum\MediaType;
 use App\Enum\PlaceType;
 use App\Enum\SectionSlug;
@@ -118,6 +119,19 @@ final class DomainModelTest extends TestCase
         $photo->setFileName('building.webp');
 
         self::assertSame('/uploads/map-places/building.webp', $photo->getUrl());
+    }
+
+    public function testTaganrogPageHasAnEditableSliderCollection(): void
+    {
+        $page = new ContentPage();
+        $image = new TaganrogSliderImage();
+        $image->priority = 2;
+        $image->setFileName('taganrog.webp');
+        $page->addSliderImage($image);
+
+        self::assertTrue($page->sliderImages->contains($image));
+        self::assertSame($page, $image->page);
+        self::assertSame('/uploads/content-files/taganrog.webp', $image->getUrl());
     }
 
     public function testMapObjectIconIsUploadedDirectlyAndKeepsApiShape(): void

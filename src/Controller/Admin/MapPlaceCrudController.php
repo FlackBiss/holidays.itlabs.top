@@ -126,7 +126,10 @@ class MapPlaceCrudController extends AbstractCrudController
             yield TextEditorField::new('workingHours', 'Время работы')->addCssClass('place-field-infrastructure')->setColumns(12);
             yield TextField::new('phone', 'Телефон')->addCssClass('place-field-infrastructure')->setColumns(12);
             yield BooleanField::new('onlineBooking', 'Возможна онлайн-запись')->addCssClass('place-field-infrastructure')->setColumns(12);
-            yield BooleanField::new('routeDrawn', 'Маршрут расчерчен')->addCssClass('place-field-infrastructure')->setColumns(12);
+            yield BooleanField::new('routeDrawn', 'Маршрут расчерчен')
+                ->setFormTypeOption('disabled', true)
+                ->setHelp('Рассчитывается автоматически по активным линиям маршрутной сети.')
+                ->addCssClass('place-field-infrastructure')->setColumns(12);
             yield UrlField::new('bookingUrl', 'Ссылка на онлайн-запись')->hideOnIndex()->addCssClass('place-field-infrastructure')->setColumns(12);
         }
     }

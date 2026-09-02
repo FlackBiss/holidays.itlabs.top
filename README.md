@@ -17,6 +17,7 @@ Symfony 7 + API Platform 4 + EasyAdmin 4. Бэкенд информационн�
 - `GET /api/content-items/{id}/qr` — QR для редактируемой внешней ссылки.
 - `GET /api/weather/current` — стабильный DTO погоды.
 - `POST /api/terminals/{code}/ping` — отметка активности терминала.
+- `GET /api/settings/exit-password` — получение настраиваемого пароля для выхода из приложения.
 
 Пример GPS-маршрута:
 
