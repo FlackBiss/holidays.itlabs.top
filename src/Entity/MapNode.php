@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\ApiResource\MapNodeInput;
+use App\Enum\GeoSource;
 use App\State\MapNodeProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -66,6 +67,14 @@ class MapNode
     #[Groups('map:read')]
     public ?float $longitude = null;
 
+    #[ORM\Column(length: 16, nullable: true, enumType: GeoSource::class)]
+    #[Groups('map:read')]
+    public ?GeoSource $geoSource = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups('map:read')]
+    public ?int $geoCalibrationVersion = null;
+
     #[ORM\Column]
     #[Groups('map:read')]
     public bool $active = true;
@@ -100,11 +109,20 @@ class MapNode
     #[Groups('map:read')]
     public function getFloor(): ?int { return $this->plan?->getId(); }
 
-    /** @return array{id: int|null, x: float, y: float, floor: int|null, latitude: float|null, longitude: float|null} */
+    /** @return array{id: int|null, x: float, y: float, floor: int|null, latitude: float|null, longitude: float|null, geoSource: string|null, geoCalibrationVersion: int|null} */
     #[Groups('map:read')]
     public function getPoint(): array
     {
-        return ['id' => $this->id, 'x' => $this->x, 'y' => $this->y, 'floor' => $this->getFloor(), 'latitude' => $this->latitude, 'longitude' => $this->longitude];
+        return [
+            'id' => $this->id,
+            'x' => $this->x,
+            'y' => $this->y,
+            'floor' => $this->getFloor(),
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
+            'geoSource' => $this->geoSource?->value,
+            'geoCalibrationVersion' => $this->geoCalibrationVersion,
+        ];
     }
 
     /** @return list<int> */

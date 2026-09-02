@@ -49,6 +49,9 @@ class MapPlan
     #[Groups('map:read')]
     public bool $active = true;
 
+    #[ORM\OneToOne(mappedBy: 'plan', targetEntity: MapGeoCalibration::class, cascade: ['persist', 'remove'])]
+    public ?MapGeoCalibration $geoCalibration = null;
+
     public function getId(): ?int { return $this->id; }
     public function __toString(): string { return $this->title; }
 

@@ -8,14 +8,22 @@ use App\ApiResource\MapNodeInput;
 use App\Entity\MapEdge;
 use App\Entity\MapNode;
 use App\Entity\MapPlan;
+use App\Enum\GeoSource;
+use App\Service\GeoCalibrationManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /** @implements ProcessorInterface<MapNodeInput, MapNode> */
 final readonly class MapNodeProcessor implements ProcessorInterface
 {
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private GeoCalibrationManager $geoCalibration,
+        private RequestStack $requestStack,
+    ) {
+    }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): MapNode
     {
@@ -24,12 +32,27 @@ final readonly class MapNodeProcessor implements ProcessorInterface
         $node = $id ? $this->em->getRepository(MapNode::class)->find($id) : new MapNode();
         if (!$node) throw new NotFoundHttpException('Точка маршрута не найдена.');
 
+        $oldPlanId = $node->plan?->getId();
+        $oldX = $node->x;
+        $oldY = $node->y;
+
         $legacyPoint = is_array($data->point) ? $data->point : [];
         $planId = $data->planId ?? $data->floor ?? ($legacyPoint['floor'] ?? null);
         $x = $data->x ?? ($legacyPoint['x'] ?? null);
         $y = $data->y ?? ($legacyPoint['y'] ?? null);
         $latitude = $data->latitude ?? ($legacyPoint['latitude'] ?? null);
         $longitude = $data->longitude ?? ($legacyPoint['longitude'] ?? null);
+        $payload = $this->requestPayload();
+        $payloadPoint = isset($payload['point']) && is_array($payload['point']) ? $payload['point'] : [];
+        $latitudePassed = array_key_exists('latitude', $payload) || array_key_exists('latitude', $payloadPoint);
+        $longitudePassed = array_key_exists('longitude', $payload) || array_key_exists('longitude', $payloadPoint);
+        if ($latitudePassed !== $longitudePassed) {
+            throw new BadRequestHttpException('latitude и longitude должны передаваться вместе.');
+        }
+        $manualCoordinatesPassed = $latitudePassed && $longitudePassed;
+        if ($manualCoordinatesPassed && ($latitude === null || $longitude === null)) {
+            throw new BadRequestHttpException('latitude и longitude должны быть числами; для удаления геопривязки используйте отдельную операцию калибровки.');
+        }
 
         if ($planId !== null) {
             $plan = $this->em->getRepository(MapPlan::class)->find((int) $planId);
@@ -46,8 +69,24 @@ final readonly class MapNodeProcessor implements ProcessorInterface
         if ($data->name !== null) $node->name = $data->name;
         if ($x !== null) $node->x = (float) $x;
         if ($y !== null) $node->y = (float) $y;
-        if ($latitude !== null) $node->latitude = (float) $latitude;
-        if ($longitude !== null) $node->longitude = (float) $longitude;
+        $positionChanged = !$id
+            || ($planId !== null && $oldPlanId !== $node->plan?->getId())
+            || ($x !== null && abs($oldX - $node->x) > 1.0E-12)
+            || ($y !== null && abs($oldY - $node->y) > 1.0E-12);
+        if ($manualCoordinatesPassed) {
+            $node->latitude = (float) $latitude;
+            $node->longitude = (float) $longitude;
+            $node->geoSource = GeoSource::MANUAL;
+            $node->geoCalibrationVersion = null;
+        } elseif ($positionChanged && $node->plan) {
+            $calculated = $this->geoCalibration->calculateForPlan($node->plan, $node->x, $node->y);
+            if ($calculated !== null) {
+                $node->latitude = $calculated['latitude'];
+                $node->longitude = $calculated['longitude'];
+                $node->geoSource = GeoSource::CALIBRATED;
+                $node->geoCalibrationVersion = $calculated['version'];
+            }
+        }
         if ($data->active !== null) $node->active = $data->active;
 
         $linkedNodes = $this->resolveLinkedNodes($data->nodes, $node);
@@ -58,6 +97,18 @@ final readonly class MapNodeProcessor implements ProcessorInterface
             $this->em->flush();
         }
         return $node;
+    }
+
+    /** @return array<string, mixed> */
+    private function requestPayload(): array
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) return [];
+        try {
+            return $request->toArray();
+        } catch (\Throwable) {
+            return [];
+        }
     }
 
     private function hasRoads(MapNode $node): bool

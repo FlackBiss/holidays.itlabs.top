@@ -18,6 +18,9 @@ Symfony 7 + API Platform 4 + EasyAdmin 4. Бэкенд информационн�
 - `GET /api/weather/current` — стабильный DTO погоды.
 - `POST /api/terminals/{code}/ping` — отметка активности терминала.
 - `GET /api/settings/exit-password` — получение настраиваемого пароля для выхода из приложения.
+- `GET|PUT|DELETE /api/map_plans/{planId}/geo_calibration` — версия и контрольные точки геокалибровки схемы.
+- `POST /api/map_plans/{planId}/geo_calibration/preview` — кусочно-аффинный preview координат без изменения базы.
+- `POST /api/map_plans/{planId}/geo_calibration/apply` — транзакционное применение сохранённой версии ко всем узлам.
 
 Пример GPS-маршрута:
 
