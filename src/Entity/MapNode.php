@@ -96,6 +96,12 @@ class MapNode
     public function getId(): ?int { return $this->id; }
     public function __toString(): string { return $this->name ?: 'Узел #'.($this->id ?? 'new'); }
 
+    #[Groups('map:read')]
+    public function getGeoSource(): ?string { return $this->geoSource?->value; }
+
+    #[Groups('map:read')]
+    public function getGeoCalibrationVersion(): ?int { return $this->geoCalibrationVersion; }
+
     public function addOutgoingEdge(MapEdge $edge): void
     {
         if (!$this->outgoingEdges->contains($edge)) $this->outgoingEdges->add($edge);
