@@ -182,6 +182,8 @@ final readonly class OpenApiFactory implements OpenApiFactoryInterface
             ], ['version' => 2, 'overwriteCalibrated' => true, 'overwriteManual' => false]),
         )));
 
+        $this->exposeNodeGeoProvenanceSchemas($openApi, $context);
+
         return $openApi;
     }
 
@@ -265,5 +267,26 @@ final readonly class OpenApiFactory implements OpenApiFactoryInterface
                 'unchangedNodeCount' => ['type' => 'integer'],
             ],
         ];
+    }
+
+    /** @param array<string, mixed> $context */
+    private function exposeNodeGeoProvenanceSchemas(OpenApi $openApi, array $context): void
+    {
+        $schemas = $openApi->getComponents()->getSchemas();
+        if ($schemas === null) return;
+        $openApi30 = str_starts_with((string) ($context['spec_version'] ?? ''), '3.0');
+        foreach ($schemas as $name => $schema) {
+            if (!str_starts_with((string) $name, 'MapNode') || str_contains((string) $name, 'Input') || !$schema instanceof \ArrayObject) continue;
+            $properties = $schema['properties'] ?? [];
+            if ($properties instanceof \ArrayObject) $properties = $properties->getArrayCopy();
+            if (!is_array($properties)) continue;
+            $properties['geoSource'] = $openApi30
+                ? ['readOnly' => true, 'type' => 'string', 'enum' => ['manual', 'calibrated'], 'nullable' => true]
+                : ['readOnly' => true, 'type' => ['string', 'null'], 'enum' => ['manual', 'calibrated', null]];
+            $properties['geoCalibrationVersion'] = $openApi30
+                ? ['readOnly' => true, 'type' => 'integer', 'nullable' => true]
+                : ['readOnly' => true, 'type' => ['integer', 'null']];
+            $schema['properties'] = $properties;
+        }
     }
 }

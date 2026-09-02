@@ -19,9 +19,28 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
+use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 final class MapNodeGeoCalibrationProcessorTest extends TestCase
 {
+    public function testGeoProvenanceIsSerializedAtTopLevel(): void
+    {
+        $node = new MapNode();
+        $node->geoSource = GeoSource::CALIBRATED;
+        $node->geoCalibrationVersion = 4;
+        $metadata = new ClassMetadataFactory(new AttributeLoader());
+        $serializer = new Serializer([new ObjectNormalizer($metadata, new MetadataAwareNameConverter($metadata))]);
+
+        $data = $serializer->normalize($node, context: ['groups' => ['map:read']]);
+
+        self::assertSame('calibrated', $data['geoSource']);
+        self::assertSame(4, $data['geoCalibrationVersion']);
+    }
+
     public function testAutomaticallyCalculatesOnCreateAndMove(): void
     {
         [$processor, $em, $stack, $plan, $node] = $this->fixture();

@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity]
 #[ApiResource(operations: [
@@ -68,11 +69,9 @@ class MapNode
     public ?float $longitude = null;
 
     #[ORM\Column(length: 16, nullable: true, enumType: GeoSource::class)]
-    #[Groups('map:read')]
     public ?GeoSource $geoSource = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups('map:read')]
     public ?int $geoCalibrationVersion = null;
 
     #[ORM\Column]
@@ -97,10 +96,12 @@ class MapNode
     public function __toString(): string { return $this->name ?: 'Узел #'.($this->id ?? 'new'); }
 
     #[Groups('map:read')]
-    public function getGeoSource(): ?string { return $this->geoSource?->value; }
+    #[SerializedName('geoSource')]
+    public function getGeoSourceForApi(): ?string { return $this->geoSource?->value; }
 
     #[Groups('map:read')]
-    public function getGeoCalibrationVersion(): ?int { return $this->geoCalibrationVersion; }
+    #[SerializedName('geoCalibrationVersion')]
+    public function getGeoCalibrationVersionForApi(): ?int { return $this->geoCalibrationVersion; }
 
     public function addOutgoingEdge(MapEdge $edge): void
     {
