@@ -21,6 +21,28 @@ final readonly class OpenApiFactory implements OpenApiFactoryInterface
         $openApi = ($this->decorated)($context);
         $paths = $openApi->getPaths();
 
+        $paths->addPath('/api/changes', (new PathItem())->withGet(new Operation(
+            operationId: 'checkContentChanges',
+            tags: ['Обновление данных'],
+            responses: [
+                '200' => new Response('Текущая версия контента. Без since changed=true.', content: new \ArrayObject([
+                    'application/json' => new MediaType(schema: new \ArrayObject([
+                        'type' => 'object',
+                        'required' => ['version', 'changed', 'updatedAt'],
+                        'properties' => [
+                            'version' => ['type' => 'string', 'pattern' => '^[a-f0-9]{32}$', 'example' => '9c0bd25b5aa6416a9aad8556276883af'],
+                            'changed' => ['type' => 'boolean', 'example' => false],
+                            'updatedAt' => ['type' => 'string', 'format' => 'date-time'],
+                        ],
+                    ])),
+                ])),
+                '400' => new Response('Некорректный формат since'),
+            ],
+            summary: 'Проверка изменений контента для фронта',
+            description: 'Опрос раз в 30 секунд. Версия меняется при добавлении, редактировании и удалении через админку/API, включая сортировку и карту. Пользователи и lastSeenAt терминалов исключены. При changed=true перезагрузите данные и только после успешной загрузки сохраните version из этого ответа. Прямой SQL и замена файлов вне приложения не отслеживаются.',
+            parameters: [new Parameter('since', 'query', 'version из предыдущей успешной загрузки данных; при первом запросе не передавать', false, schema: ['type' => 'string', 'pattern' => '^[a-f0-9]{32}$'])],
+        )));
+
         $paths->addPath('/api/map/search', (new PathItem())->withGet(new Operation(
             operationId: 'searchMapObjects',
             tags: ['Карта и навигация'],
