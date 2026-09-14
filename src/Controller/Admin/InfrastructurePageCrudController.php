@@ -12,7 +12,15 @@ final class InfrastructurePageCrudController extends AbstractStaticPageCrudContr
 
     public function configureFields(string $pageName): iterable
     {
-        yield ArrayField::new('mainTerritoryInfrastructure', 'Инфраструктура основной территории')->setColumns(12);
-        yield ArrayField::new('buildingSevenInfrastructure', 'Инфраструктура территории 7 корпуса')->setColumns(12);
+        foreach ([
+            'mainTerritoryInfrastructure' => 'Инфраструктура основной территории',
+            'buildingSevenInfrastructure' => 'Инфраструктура территории 7 корпуса',
+        ] as $property => $label) {
+            yield ArrayField::new($property, $label)->setColumns(12)
+                ->addCssClass('infrastructure-sortable')
+                ->addJsFiles('assets/admin/infrastructure-order.js')
+                ->addCssFiles('styles/infrastructure-order.css')
+                ->setHelp('Перетаскивайте пункты за ↕ или используйте стрелки. Для сохранения порядка нажмите «Сохранить».');
+        }
     }
 }

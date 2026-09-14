@@ -12,6 +12,7 @@ use App\Exception\GeoCalibrationValidationException;
 final class GeoCalibrationEngine
 {
     private const float EPSILON = 1.0E-9;
+    public const int MAX_CONTROL_POINTS = 30;
 
     /**
      * @param array<string, mixed> $input
@@ -29,8 +30,8 @@ final class GeoCalibrationEngine
         if (!is_array($rawPoints)) {
             throw new GeoCalibrationValidationException(['controlPoints должен быть массивом.']);
         }
-        if (count($rawPoints) < 4 || count($rawPoints) > 15) {
-            $errors[] = 'Количество контрольных точек должно быть от 4 до 15.';
+        if (count($rawPoints) < 4 || count($rawPoints) > self::MAX_CONTROL_POINTS) {
+            $errors[] = sprintf('Количество контрольных точек должно быть от 4 до %d.', self::MAX_CONTROL_POINTS);
         }
 
         $points = [];
@@ -174,11 +175,11 @@ final class GeoCalibrationEngine
                 continue;
             }
             ++$calculable;
-            $items[] = $base + [
+            $items[] = array_replace($base, [
                 'calculatedLatitude' => $calculated['latitude'],
                 'calculatedLongitude' => $calculated['longitude'],
                 'status' => 'calculated',
-            ];
+            ]);
         }
 
         [$metrics, $warnings] = $this->leaveOneOutMetrics($points);

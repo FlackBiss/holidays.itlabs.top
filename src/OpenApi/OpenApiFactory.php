@@ -10,6 +10,7 @@ use ApiPlatform\OpenApi\Model\PathItem;
 use ApiPlatform\OpenApi\Model\RequestBody;
 use ApiPlatform\OpenApi\Model\Response;
 use ApiPlatform\OpenApi\OpenApi;
+use App\Service\GeoCalibrationEngine;
 
 final readonly class OpenApiFactory implements OpenApiFactoryInterface
 {
@@ -99,7 +100,7 @@ final readonly class OpenApiFactory implements OpenApiFactoryInterface
             'properties' => [
                 'method' => ['type' => 'string', 'enum' => ['piecewise_affine']],
                 'controlPoints' => [
-                    'type' => 'array', 'minItems' => 4, 'maxItems' => 15,
+                    'type' => 'array', 'minItems' => 4, 'maxItems' => GeoCalibrationEngine::MAX_CONTROL_POINTS,
                     'items' => [
                         'type' => 'object',
                         'required' => ['x', 'y', 'latitude', 'longitude', 'position'],

@@ -34,7 +34,7 @@ final class GeoCalibrationEngineTest extends TestCase
     {
         yield 'too few' => [[
             self::point(0, 0, 56, 37, 1), self::point(100, 0, 56, 38, 2), self::point(0, 100, 55, 37, 3),
-        ], 'от 4 до 15'];
+        ], 'от 4 до 30'];
         yield 'out of plan and GPS ranges' => [[
             self::point(-1, 0, 56, 37, 1), self::point(100, 0, 91, 38, 2),
             self::point(0, 100, 55, 181, 3), self::point(100, 100, 55, 38, 4),
@@ -73,10 +73,63 @@ final class GeoCalibrationEngineTest extends TestCase
         self::assertSame(1, $preview['calculableNodeCount']);
         self::assertSame(1, $preview['uncoveredNodeCount']);
         self::assertSame('calculated', $preview['nodes'][0]['status']);
+        self::assertEqualsWithDelta(55.995, $preview['nodes'][0]['calculatedLatitude'], 1.0E-9);
+        self::assertEqualsWithDelta(37.01, $preview['nodes'][0]['calculatedLongitude'], 1.0E-9);
         self::assertSame('outside_control_hull', $preview['nodes'][1]['status']);
         self::assertNull($inside->latitude);
         self::assertNull($inside->longitude);
         self::assertArrayHasKey('medianErrorMeters', $preview['metrics']);
+    }
+
+    public function testAcceptsUpToThirtyControlPoints(): void
+    {
+        $points = [];
+        for ($index = 0; $index < 30; ++$index) {
+            $angle = 2 * M_PI * $index / 30;
+            $points[] = self::point(
+                500 + 400 * cos($angle),
+                500 + 400 * sin($angle),
+                56 + 0.01 * sin($angle),
+                37 + 0.01 * cos($angle),
+                $index + 1,
+            );
+        }
+
+        $normalized = $this->engine->validateAndNormalize($this->plan, [
+            'method' => 'piecewise_affine',
+            'controlPoints' => $points,
+        ]);
+
+        self::assertCount(30, $normalized['controlPoints']);
+    }
+
+    public function testApplicablePreviewIncludesCalculatedCoordinates(): void
+    {
+        $node = new MapNode();
+        $node->x = 500;
+        $node->y = 500;
+
+        $preview = $this->engine->preview($this->normalizedSquare(), [$node]);
+
+        self::assertTrue($preview['canApply']);
+        self::assertSame('calculated', $preview['nodes'][0]['status']);
+        self::assertIsFloat($preview['nodes'][0]['calculatedLatitude']);
+        self::assertIsFloat($preview['nodes'][0]['calculatedLongitude']);
+    }
+
+    public function testRejectsMoreThanThirtyControlPoints(): void
+    {
+        $points = [];
+        for ($index = 0; $index < 31; ++$index) {
+            $points[] = self::point($index * 10, ($index % 2) * 10, 56, 37, $index + 1);
+        }
+
+        $this->expectException(GeoCalibrationValidationException::class);
+        $this->expectExceptionMessage('от 4 до 30');
+        $this->engine->validateAndNormalize($this->plan, [
+            'method' => 'piecewise_affine',
+            'controlPoints' => $points,
+        ]);
     }
 
     private function normalizedSquare(): array

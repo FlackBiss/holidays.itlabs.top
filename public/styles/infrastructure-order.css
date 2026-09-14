@@ -1,0 +1,10 @@
+.infrastructure-sortable .field-collection-item { display: flex; align-items: center; gap: 8px; }
+.infrastructure-order-controls { display: inline-flex; flex: 0 0 auto; gap: 3px; }
+.infrastructure-order-controls .btn { padding: 5px 9px; }
+.infrastructure-order-controls [data-order-action="drag"] { cursor: grab; }
+.infrastructure-sortable .field-collection-item > input { flex: 1 1 auto; min-width: 0; }
+.infrastructure-sortable .infrastructure-dragging { opacity: .4; }
+@media (max-width: 575px) {
+    .infrastructure-sortable .field-collection-item { gap: 4px; }
+    .infrastructure-order-controls .btn { padding: 5px 6px; }
+}

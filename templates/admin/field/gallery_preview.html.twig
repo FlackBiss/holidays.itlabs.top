@@ -1,0 +1,9 @@
+{% if field.value %}
+    <a href="{{ asset(field.value) }}" target="_blank" rel="noopener noreferrer" aria-label="Открыть {{ entity.instance.title }}">
+        {% if entity.instance.type.value == 'video' %}
+            <video src="{{ asset(field.value) }}" preload="metadata" muted style="width: 120px; height: 80px; object-fit: contain; border-radius: 6px;"></video>
+        {% else %}
+            <img src="{{ asset(field.value) }}" alt="{{ entity.instance.title }}" loading="lazy" style="width: 120px; height: 80px; object-fit: contain; border-radius: 6px;">
+        {% endif %}
+    </a>
+{% else %}<span class="text-muted">Нет файла</span>{% endif %}

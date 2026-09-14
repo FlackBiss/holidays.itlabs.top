@@ -17,9 +17,9 @@ final class MealTimesPageCrudController extends AbstractStaticPageCrudController
         yield TextEditorField::new('mainTerritoryDiningHallDescription', 'Время работы обеденного зала основной территории')->setColumns(12);
         yield TextEditorField::new('buildingSevenDiningHallDescription', 'Время работы обеденного зала территории 7 корпуса')->setColumns(12);
         yield VichFileField::new('logoFile', 'Изображение обеденных залов')->onlyOnForms()->setFormTypeOption('allow_delete', true)->setColumns(12);
-        yield TextEditorField::new('cafeDescription', 'Время работы кафе (Бассейн, 2 этаж)')->setColumns(12);
-        yield VichFileField::new('mascotTwoFile', 'Изображение кафе (Бассейн, 2 этаж)')->onlyOnForms()->setFormTypeOption('allow_delete', true)->setColumns(12);
-        yield TextEditorField::new('phytoBarDescription', 'Время работы фитобара (Бассейн, 2 этаж)')->setColumns(12);
-        yield VichFileField::new('extraImageFile', 'Изображение фитобара (Бассейн, 2 этаж)')->onlyOnForms()->setFormTypeOption('allow_delete', true)->setColumns(12);
+        yield TextEditorField::new('cafeDescription', 'Время работы кафе')->setColumns(12);
+        yield VichFileField::new('mascotTwoFile', 'Изображение кафе')->onlyOnForms()->setFormTypeOption('allow_delete', true)->setColumns(12);
+        yield TextEditorField::new('phytoBarDescription', 'Время работы бара')->setColumns(12);
+        yield VichFileField::new('extraImageFile', 'Изображение бара')->onlyOnForms()->setFormTypeOption('allow_delete', true)->setColumns(12);
     }
 }

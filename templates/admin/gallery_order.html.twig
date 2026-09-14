@@ -1,0 +1,31 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+{% block content_title %}Фотогалерея — порядок отображения{% endblock %}
+{% block page_actions %}<a class="btn btn-secondary" href="{{ back_url }}">Назад в галерею</a>{% endblock %}
+{% block main %}
+    <link rel="stylesheet" href="{{ asset('styles/gallery-order.css') }}">
+    <p>Перетаскивайте карточки, чтобы изменить порядок, затем нажмите «Сохранить». Можно также использовать кнопки со стрелками. Скрытые материалы отмечены и сохраняют своё место.</p>
+    <form method="post" id="gallery-order-form">
+        <input type="hidden" name="_token" value="{{ csrf_token('gallery_order') }}">
+        <div class="gallery-order-grid" id="gallery-order-grid">
+            {% for item in items %}
+                <article class="gallery-order-card" draggable="true">
+                    <input type="hidden" name="order[]" value="{{ item.id }}">
+                    {% if item.url %}
+                        {% if item.type.value == 'video' %}
+                            <video src="{{ asset(item.url) }}" preload="metadata" muted controls></video>
+                        {% else %}
+                            <a href="{{ asset(item.url) }}" target="_blank" rel="noopener noreferrer" draggable="false"><img src="{{ asset(item.url) }}" alt="{{ item.title }}" loading="lazy" draggable="false"></a>
+                        {% endif %}
+                    {% else %}<div class="gallery-order-placeholder">Нет файла</div>{% endif %}
+                    <div class="gallery-order-caption"><span data-position>{{ loop.index }}</span>. {{ item.title }}{% if not item.active %} <span class="badge badge-secondary">Скрыто</span>{% endif %}</div>
+                    <div class="gallery-order-controls">
+                        <button type="button" class="btn btn-secondary" data-move="-1" aria-label="Переместить раньше">←</button>
+                        <button type="button" class="btn btn-secondary" data-move="1" aria-label="Переместить позже">→</button>
+                    </div>
+                </article>
+            {% else %}<p>В галерее пока нет материалов.</p>{% endfor %}
+        </div>
+        <div class="gallery-order-save"><button type="submit" class="btn btn-primary" {% if not items %}disabled{% endif %}>Сохранить</button> <span id="gallery-order-status" role="status" aria-live="polite"></span></div>
+    </form>
+    <script src="{{ asset('assets/admin/gallery-order.js') }}" defer></script>
+{% endblock %}
